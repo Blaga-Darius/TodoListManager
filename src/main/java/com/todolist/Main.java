@@ -101,29 +101,37 @@ public class Main {
         System.out.println("Task added successfully!");
     }
 
-    private static void completeTask(TaskOperations todoList, TaskStorage storage)
-            throws IOException {
-
+    private static void completeTask(TaskOperations todoList, TaskStorage storage) throws IOException {
         System.out.print("Enter task ID: ");
-        int id = Integer.parseInt(scanner.nextLine());
+        String input = scanner.nextLine();
+
+        int id;
+        try {
+            id = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Please enter a valid number!");
+            return;
+        }
 
         TaskValidator.validateId(id);
-
         todoList.completeTask(id);
-
         storage.saveTasks(todoList.getTasks());
     }
 
-    private static void deleteTask(TaskOperations todoList, TaskStorage storage)
-            throws IOException {
-
+    private static void deleteTask(TaskOperations todoList, TaskStorage storage) throws IOException {
         System.out.print("Enter task ID: ");
-        int id = Integer.parseInt(scanner.nextLine());
+        String input = scanner.nextLine();
+
+        int id;
+        try {
+            id = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Please enter a valid number!");
+            return;
+        }
 
         TaskValidator.validateId(id);
-
         todoList.deleteTask(id);
-
         storage.saveTasks(todoList.getTasks());
     }
 
