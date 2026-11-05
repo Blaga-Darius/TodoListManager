@@ -144,7 +144,7 @@ public class Main {
 
             System.out.println("Tasks loaded successfully!");
 
-        } catch (IOException | NumberFormatException e) {
+        } catch (IOException | NumberFormatException | SecurityException e) {
             System.out.println("Could not load tasks: " + e.getMessage());
         }
     }
