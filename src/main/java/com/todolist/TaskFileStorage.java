@@ -4,15 +4,18 @@ import com.todolist.interfaces.TaskStorage;
 
 import java.io.*;
 import java.util.ArrayList;
-import com.todolist.interfaces.TaskStorage;
 
 public class TaskFileStorage implements TaskStorage {
 
-    private static final String FILE_NAME = "tasks.txt";
+    private final String fileName;
+
+    public TaskFileStorage(String fileName) {
+        this.fileName = fileName;
+    }
 
     @Override
     public void saveTasks(ArrayList<Task> tasks) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
             for (Task task : tasks) {
                 writer.write(task.getId() + ";" + task.getTitle() + ";" +
                         task.getDescription() + ";" + task.isCompleted());
@@ -24,7 +27,7 @@ public class TaskFileStorage implements TaskStorage {
     @Override
     public ArrayList<Task> loadTasks() throws IOException {
         ArrayList<Task> tasks = new ArrayList<>();
-        File file = new File(FILE_NAME);
+        File file = new File(fileName);
 
         if (!file.exists()) {
             return tasks;
@@ -44,6 +47,12 @@ public class TaskFileStorage implements TaskStorage {
                     int id = Integer.parseInt(data[0]);
                     String title = data[1];
                     String description = data[2];
+
+                    if (!data[3].equals("true") && !data[3].equals("false")) {
+                        System.out.println("Skipping invalid task status.");
+                        continue;
+                    }
+
                     boolean completed = Boolean.parseBoolean(data[3]);
 
                     Task task = new Task(id, title, description);
@@ -53,6 +62,7 @@ public class TaskFileStorage implements TaskStorage {
                     }
 
                     tasks.add(task);
+
                 } catch (NumberFormatException e) {
                     System.out.println("Skipping invalid task in file.");
                 }

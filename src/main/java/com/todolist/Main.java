@@ -10,12 +10,21 @@ import java.util.Scanner;
 
 public class Main {
 
-    private static Scanner scanner = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
 
         TaskOperations todoList = new TodoList();
-        TaskStorage storage = new TaskFileStorage();
+
+        String fileName = "tasks.txt";
+
+        if (args.length > 0 && !args[0].isBlank()) {
+            fileName = args[0];
+        }
+
+        TaskStorage storage = new TaskFileStorage(fileName);
+
+        System.out.println("Using storage file: " + fileName);
 
         loadTasks(todoList, storage);
 

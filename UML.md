@@ -1,46 +1,51 @@
-TO-DO LIST MANAGER - UML
+# TO-DO LIST MANAGER – UML
 
-Task
-- id: int
-- title: String
-- description: String
-- completed: boolean
+## 1. Class Overview
 
-TodoList implements TaskOperations
-- tasks: ArrayList<Task>
-- taskMap: HashMap<Integer, Task>
+### Task
+Represents a single task in the application.
+- `id: int`
+- `title: String`
+- `description: String`
+- `completed: boolean`
 
-TaskFileStorage implements TaskStorage
+### TodoList
+Implements `TaskOperations` and manages the application's tasks.
+- `tasks: ArrayList<Task>`
+- `taskMap: HashMap<Integer, Task>`
 
-TaskValidator
+### TaskFileStorage
+Implements `TaskStorage` and handles saving and loading tasks from a file.
 
-Main
+### TaskValidator
+Validates task titles, descriptions, and IDs.
 
-TaskOperations (interface)
-TaskStorage (interface)
+### Main
+Contains the main menu and coordinates user interaction, task management, and file storage.
 
-TaskNotFoundException extends RuntimeException
-InvalidTaskException extends RuntimeException
+### Interfaces
+- `TaskOperations` – defines the operations available for managing tasks.
+- `TaskStorage` – defines the operations for saving and loading tasks.
 
-RELATIONSHIPS
+### Custom Exceptions
+- `TaskNotFoundException` – extends `RuntimeException`.
+- `InvalidTaskException` – extends `RuntimeException`.
 
-Main --> TaskOperations
-Main --> TaskStorage
+## 2. Relationships
 
-TodoList ..|> TaskOperations
-TaskFileStorage ..|> TaskStorage
+- `Main` uses `TaskOperations` and `TaskStorage`.
+- `TodoList` implements `TaskOperations`.
+- `TaskFileStorage` implements `TaskStorage`.
+- `TodoList` manages multiple `Task` objects.
+- `TodoList` uses an `ArrayList` to store tasks.
+- `TodoList` uses a `HashMap` to find tasks by ID.
+- `TaskValidator` uses `InvalidTaskException` when input is invalid.
+- `TodoList` uses `TaskNotFoundException` when a task cannot be found.
+- Both custom exceptions extend `RuntimeException`.
 
-TodoList --> Task : manages
-TodoList --> HashMap : stores tasks by ID
-TodoList --> ArrayList : stores tasks
+## 3. UML Class Diagram (PlantUML)
 
-TaskValidator --> Task : validates input
-
-TaskNotFoundException --|> RuntimeException
-InvalidTaskException --|> RuntimeException
-
-UML DIAGRAM (PlantUML)
-
+```plantuml
 @startuml
 
 class Task {
@@ -48,7 +53,13 @@ class Task {
   - title: String
   - description: String
   - completed: boolean
+  + Task(id: int, title: String, description: String)
+  + getId(): int
+  + getTitle(): String
+  + getDescription(): String
+  + isCompleted(): boolean
   + markAsCompleted(): void
+  + toString(): String
 }
 
 interface TaskOperations {
@@ -65,13 +76,48 @@ interface TaskStorage {
   + loadTasks(): ArrayList<Task>
 }
 
-class TodoList
-class TaskFileStorage
-class TaskValidator
-class Main
+class TodoList {
+  - tasks: ArrayList<Task>
+  - taskMap: HashMap<Integer, Task>
+  + TodoList()
+  + addTask(task: Task): void
+  + displayTasks(): void
+  + completeTask(id: int): void
+  + deleteTask(id: int): void
+  + findTask(id: int): Task
+  + getTasks(): ArrayList<Task>
+}
 
-class TaskNotFoundException
-class InvalidTaskException
+class TaskFileStorage {
+  - FILE_NAME: String
+  + saveTasks(tasks: ArrayList<Task>): void
+  + loadTasks(): ArrayList<Task>
+}
+
+class TaskValidator {
+  + validateTitle(title: String): void
+  + validateDescription(description: String): void
+  + validateId(id: int): void
+}
+
+class Main {
+  - scanner: Scanner
+  + main(args: String[]): void
+  - addTask(todoList: TaskOperations, storage: TaskStorage): void
+  - completeTask(todoList: TaskOperations, storage: TaskStorage): void
+  - deleteTask(todoList: TaskOperations, storage: TaskStorage): void
+  - loadTasks(todoList: TaskOperations, storage: TaskStorage): void
+}
+
+class TaskNotFoundException {
+  + TaskNotFoundException(message: String)
+}
+
+class InvalidTaskException {
+  + InvalidTaskException(message: String)
+}
+
+class RuntimeException
 
 TodoList ..|> TaskOperations
 TaskFileStorage ..|> TaskStorage
@@ -79,12 +125,22 @@ TaskFileStorage ..|> TaskStorage
 TaskNotFoundException --|> RuntimeException
 InvalidTaskException --|> RuntimeException
 
-TodoList "1" --> "*" Task
-TodoList --> ArrayList
-TodoList --> HashMap
+TodoList "1" --> "*" Task : manages
+TodoList --> ArrayList : stores tasks
+TodoList --> HashMap : indexes tasks by ID
 
 Main --> TaskOperations
 Main --> TaskStorage
 Main --> TaskValidator
+Main --> Task
+
+TaskValidator ..> InvalidTaskException
+TodoList ..> TaskNotFoundException
 
 @enduml
+```
+
+## 4. Collections Used
+
+- `ArrayList<Task>` – stores the tasks in a list.
+- `HashMap<Integer, Task>` – stores tasks using their IDs as keys, allowing efficient lookup.
